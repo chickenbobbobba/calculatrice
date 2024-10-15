@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/samb/vscode/calculatrice/build",
+  "command": "/usr/bin/c++   -g -std=gnu++23 -o CMakeFiles/calc.dir/main.cpp.o -c /home/samb/vscode/calculatrice/main.cpp",
+  "file": "/home/samb/vscode/calculatrice/main.cpp",
+  "output": "CMakeFiles/calc.dir/main.cpp.o"
+}
+]
