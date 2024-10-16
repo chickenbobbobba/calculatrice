@@ -125,7 +125,7 @@ int main(int, char**) {
         std::string currentToken = tokenin[i]; 
         std::cout << i << " " << currentToken << " |#| "; printStringArray(output); std::cout << "|#| "; printStringArray(opstack); std::cout << std::endl;
         std::optional<double> number = getNumber(tokenin[i]);
-        std::string topelement;
+        std::string topElement;
         
         if (number != std::nullopt) {
             output.push_back(std::to_string(*number));
@@ -135,19 +135,19 @@ int main(int, char**) {
 
             } else if (operators.contains(currentToken) && !operatorIgnoreList.contains(currentToken)) {
                 if (opstack.size() == 0) {
-                    topelement = "_";
+                    topElement = "_";
                 } else {
-                    topelement = opstack.back();
+                    topElement = opstack.back();
                 }
-                while (topelement != "(" && topelement != "_" && 
-                      (operators[topelement] > operators[currentToken] 
-                      || (operators[currentToken] == operators[topelement] 
+                while (topElement != "(" && topElement != "_" && 
+                      (operators[topElement] > operators[currentToken] 
+                      || (operators[currentToken] == operators[topElement] 
                       && !rightAssociated.contains(currentToken)))) {
                         /* jesus christ thats some logic and a half */
                     
                     output.push_back(opstack.back());
                     opstack.pop_back();
-                    topelement = opstack.back();
+                    topElement = opstack.back();
                 }
                 opstack.push_back(currentToken);
 
