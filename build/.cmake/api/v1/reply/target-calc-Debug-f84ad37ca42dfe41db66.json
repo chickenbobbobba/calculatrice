@@ -103,7 +103,7 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "main.h",
+			"path" : "main.hpp",
 			"sourceGroupIndex" : 1
 		}
 	],

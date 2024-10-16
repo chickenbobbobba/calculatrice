@@ -1,19 +1,33 @@
-#include "main.h"
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
+#include "main.hpp"
+#include <cctype>
+#include <optional>
 
 std::optional<double> getNumber(std::string& input) {
     try {
         return std::stod(input);
     } catch(std::exception a) {
-        return NULL;
+        return std::nullopt;
     }
+}
+
+std::string removeTrailingZeros(std::string str) {
+  size_t decimal = str.find('.');
+  if (decimal == std::string::npos)
+    return str;
+
+  size_t last = str.find_last_not_of('0');
+  if (last == decimal) {
+    return str.substr(0, decimal);
+  }
+  return str.substr(0, last + 1);
 }
 
 void printStringArray(std::vector<std::string>& thing) {
     for (int i = 0; i < thing.size(); i++) {
-        std::cout << thing[i] << " ";
+        if (getNumber(thing[i]) != std::nullopt)
+            std::cout << removeTrailingZeros(thing[i]) << " ";
+        else
+            std::cout << thing[i] << " ";
     }
 }
 
@@ -100,15 +114,14 @@ int main(int, char**) {
     for (int i = 0; i < tokenin.size(); i++) {
 
         std::string currentToken = tokenin[i]; 
-        std::cout << i << " " << currentToken << " | "; printStringArray(output); std::cout << " | "; printStringArray(opstack); std::cout << std::endl;
+        std::cout << i << " " << currentToken << " |#| "; printStringArray(output); std::cout << "|#| "; printStringArray(opstack); std::cout << std::endl;
         std::optional<double> number = getNumber(tokenin[i]);
         std::string topelement;
         
-        if (number != NULL) {
+        if (number != std::nullopt) {
             output.push_back(std::to_string(*number));
         } else {
             if (functions.contains(currentToken)) {
-                std::cout << "functions" << std::endl;
                 opstack.push_back(currentToken);
 
             } else if (operators.contains(currentToken) && !operatorIgnoreList.contains(currentToken)) {
@@ -123,11 +136,6 @@ int main(int, char**) {
                       && !rightAssociated.contains(currentToken)))) {
                         /* jesus christ thats some logic and a half */
                     
-                    // std::cout << "operators" << std::endl;
-                    /*std::cout << "opstack "; printStringArray(opstack);
-                    std::cout << std::endl;
-                    std::cout << "output "; printStringArray(output);
-                    std::cout << std::endl; */
                     output.push_back(opstack.back());
                     opstack.pop_back();
                     topelement = opstack.back();
@@ -135,7 +143,6 @@ int main(int, char**) {
                 opstack.push_back(currentToken);
 
             } else if (currentToken == ",") {
-                std::cout << "commas" << std::endl;
                 while (opstack.back() != "(") {
                     temp = opstack.back();
                     opstack.pop_back();
@@ -144,10 +151,8 @@ int main(int, char**) {
 
             } else if (currentToken == "(") {
                 opstack.push_back("(");
-                std::cout << "open bracket" << std::endl;
 
             } else if (currentToken == ")") {
-                std::cout << "close bracket" << std::endl;
                 while (opstack.back() != "(") {
                     if (opstack.size() == 0) std::cout << "error: mismatched parenthesis!\n";
                     output.push_back(opstack.back());
