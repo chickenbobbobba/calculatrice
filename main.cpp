@@ -1,6 +1,15 @@
 #include "main.hpp"
+
 #include <cctype>
+#include <cmath>
+#include <cstddef>
+#include <exception>
+#include <iostream>
 #include <optional>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 std::optional<double> getNumber(std::string& input) {
     try {
