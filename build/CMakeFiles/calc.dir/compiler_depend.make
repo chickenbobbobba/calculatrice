@@ -158,6 +158,7 @@ CMakeFiles/calc.dir/main.cpp.o: /home/samb/vscode/calculatrice/main.cpp \
   /usr/include/c++/14.2.1/bits/unicode-data.h \
   /usr/include/c++/14.2.1/bits/unicode.h \
   /usr/include/c++/14.2.1/bits/uniform_int_dist.h \
+  /usr/include/c++/14.2.1/bits/unordered_map.h \
   /usr/include/c++/14.2.1/bits/unordered_set.h \
   /usr/include/c++/14.2.1/bits/uses_allocator.h \
   /usr/include/c++/14.2.1/bits/uses_allocator_args.h \
@@ -221,6 +222,7 @@ CMakeFiles/calc.dir/main.cpp.o: /home/samb/vscode/calculatrice/main.cpp \
   /usr/include/c++/14.2.1/tuple \
   /usr/include/c++/14.2.1/type_traits \
   /usr/include/c++/14.2.1/typeinfo \
+  /usr/include/c++/14.2.1/unordered_map \
   /usr/include/c++/14.2.1/unordered_set \
   /usr/include/c++/14.2.1/variant \
   /usr/include/c++/14.2.1/vector \
@@ -272,6 +274,8 @@ CMakeFiles/calc.dir/main.cpp.o: /home/samb/vscode/calculatrice/main.cpp \
 
 /usr/include/time.h:
 
+/usr/include/sys/single_threaded.h:
+
 /usr/include/c++/14.2.1/bits/ostream_insert.h:
 
 /usr/include/c++/14.2.1/bits/parse_numbers.h:
@@ -281,8 +285,6 @@ CMakeFiles/calc.dir/main.cpp.o: /home/samb/vscode/calculatrice/main.cpp \
 /home/samb/vscode/calculatrice/main.h:
 
 /usr/include/c++/14.2.1/bits/node_handle.h:
-
-/usr/include/sys/single_threaded.h:
 
 /usr/include/c++/14.2.1/bits/nested_exception.h:
 
@@ -564,6 +566,8 @@ CMakeFiles/calc.dir/main.cpp.o: /home/samb/vscode/calculatrice/main.cpp \
 
 /usr/include/bits/stdint-uintn.h:
 
+/usr/include/c++/14.2.1/unordered_map:
+
 /usr/include/bits/types/cookie_io_functions_t.h:
 
 /usr/include/bits/types/struct_sched_param.h:
@@ -631,6 +635,8 @@ CMakeFiles/calc.dir/main.cpp.o: /home/samb/vscode/calculatrice/main.cpp \
 /usr/include/bits/wordsize.h:
 
 /usr/include/stdio.h:
+
+/usr/include/c++/14.2.1/bits/unordered_map.h:
 
 /usr/include/c++/14.2.1/x86_64-pc-linux-gnu/bits/ctype_inline.h:
 
