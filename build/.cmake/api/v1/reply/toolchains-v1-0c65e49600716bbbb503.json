@@ -5,21 +5,22 @@
 		{
 			"compiler" : 
 			{
-				"id" : "GNU",
+				"id" : "Clang",
 				"implicit" : 
 				{
 					"includeDirectories" : 
 					[
-						"/usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include",
+						"/usr/lib/clang/18/include",
 						"/usr/local/include",
-						"/usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include-fixed",
 						"/usr/include"
 					],
 					"linkDirectories" : 
 					[
-						"/usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1",
-						"/usr/lib",
-						"/lib"
+						"/usr/lib64/gcc/x86_64-pc-linux-gnu/14.2.1",
+						"/usr/lib64",
+						"/lib64",
+						"/lib",
+						"/usr/lib"
 					],
 					"linkFrameworkDirectories" : [],
 					"linkLibraries" : 
@@ -31,8 +32,8 @@
 						"gcc_s"
 					]
 				},
-				"path" : "/usr/bin/cc",
-				"version" : "14.2.1"
+				"path" : "/usr/bin/clang",
+				"version" : "18.1.8"
 			},
 			"language" : "C",
 			"sourceFileExtensions" : 
@@ -44,7 +45,7 @@
 		{
 			"compiler" : 
 			{
-				"id" : "GNU",
+				"id" : "Clang",
 				"implicit" : 
 				{
 					"includeDirectories" : 
@@ -52,16 +53,17 @@
 						"/usr/include/c++/14.2.1",
 						"/usr/include/c++/14.2.1/x86_64-pc-linux-gnu",
 						"/usr/include/c++/14.2.1/backward",
-						"/usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include",
+						"/usr/lib/clang/18/include",
 						"/usr/local/include",
-						"/usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/include-fixed",
 						"/usr/include"
 					],
 					"linkDirectories" : 
 					[
-						"/usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1",
-						"/usr/lib",
-						"/lib"
+						"/usr/lib64/gcc/x86_64-pc-linux-gnu/14.2.1",
+						"/usr/lib64",
+						"/lib64",
+						"/lib",
+						"/usr/lib"
 					],
 					"linkFrameworkDirectories" : [],
 					"linkLibraries" : 
@@ -75,8 +77,8 @@
 						"gcc"
 					]
 				},
-				"path" : "/usr/bin/c++",
-				"version" : "14.2.1"
+				"path" : "/usr/bin/clang++",
+				"version" : "18.1.8"
 			},
 			"language" : "CXX",
 			"sourceFileExtensions" : 

@@ -14,7 +14,7 @@ std::optional<double> getNumber(std::string& input) {
 void printStringArray(std::vector<std::string>& thing) {
     for (int i = 0; i < thing.size(); i++) {
         std::cout << thing[i] << " ";
-    }   std::cout << std::endl;
+    }
 }
 
 int main(int, char**) {
@@ -33,6 +33,12 @@ int main(int, char**) {
         {"%", 8},
         {"!", 9},
         {"^", 9},
+        {"_", -1},
+    };
+
+    std::unordered_set<std::string> operatorIgnoreList = {
+        "(",
+        ")",
     };
 
     std::unordered_set<std::string> functions = {
@@ -42,11 +48,11 @@ int main(int, char**) {
         "tan",
     };
 
-    std::unordered_set<std::string> leftAssociated = {
-        "(",
+    std::unordered_set<std::string> rightAssociated = {
+        "^",
     };
 
-    std::cout << "equation:   ";
+    std::cout << "equation:  ";
     std::string equation;
     std::getline(std::cin, equation);
 
@@ -77,9 +83,9 @@ int main(int, char**) {
 
     /* print tokenised input */
 
-    std::cout << "tokensised: ";
+    std::cout << "tokenised: ";
     for (auto i : tokenin) {
-        std::cout << i << " ";
+        std::cout << i << ".";
     }   std::cout << "\n";
 
     /* shunting yard algorithm 
@@ -88,38 +94,49 @@ int main(int, char**) {
 
     std::vector<std::string> output;  /* output stack. when only 1 number left here, solve is complete. */
     std::vector<std::string> opstack; /* operator stack */
-    opstack.push_back("");
+    std::string temp;
+    opstack.push_back("_");
 
-    std::cout << tokenin.size() << "\n";
     for (int i = 0; i < tokenin.size(); i++) {
-        std::cout << i << " | "; printStringArray(output);
-        std::optional<double> a = getNumber(tokenin[i]);
+
         std::string currentToken = tokenin[i]; 
+        std::cout << i << " " << currentToken << " | "; printStringArray(output); std::cout << " | "; printStringArray(opstack); std::cout << std::endl;
+        std::optional<double> number = getNumber(tokenin[i]);
         std::string topelement;
-        std::string temp;
-        if (a != NULL) {
-            output.push_back(std::to_string(*a));
+        
+        if (number != NULL) {
+            output.push_back(std::to_string(*number));
         } else {
             if (functions.contains(currentToken)) {
                 std::cout << "functions" << std::endl;
                 opstack.push_back(currentToken);
 
-            } else if (operators.contains(currentToken)) {
-                topelement = opstack.back();
-                while (topelement != "(" && (operators[topelement] > operators[currentToken] 
-                       || (operators[currentToken] == operators[topelement] 
-                       && !leftAssociated.contains(currentToken)))) {
-                        /* jesus christ thats some logic and a half */
-                    std::cout << "operators" << std::endl;
-                    temp = opstack.back();
-                    opstack.pop_back();
-                    output.push_back(temp);
-                    opstack.push_back(currentToken);
+            } else if (operators.contains(currentToken) && !operatorIgnoreList.contains(currentToken)) {
+                if (opstack.size() == 0) {
+                    topelement = "_";
+                } else {
+                    topelement = opstack.back();
                 }
+                while (topelement != "(" && topelement != "_" && 
+                      (operators[topelement] > operators[currentToken] 
+                      || (operators[currentToken] == operators[topelement] 
+                      && !rightAssociated.contains(currentToken)))) {
+                        /* jesus christ thats some logic and a half */
+                    
+                    // std::cout << "operators" << std::endl;
+                    /*std::cout << "opstack "; printStringArray(opstack);
+                    std::cout << std::endl;
+                    std::cout << "output "; printStringArray(output);
+                    std::cout << std::endl; */
+                    output.push_back(opstack.back());
+                    opstack.pop_back();
+                    topelement = opstack.back();
+                }
+                opstack.push_back(currentToken);
 
             } else if (currentToken == ",") {
+                std::cout << "commas" << std::endl;
                 while (opstack.back() != "(") {
-                    std::cout << "commas" << std::endl;
                     temp = opstack.back();
                     opstack.pop_back();
                     output.push_back(temp);
@@ -130,32 +147,30 @@ int main(int, char**) {
                 std::cout << "open bracket" << std::endl;
 
             } else if (currentToken == ")") {
+                std::cout << "close bracket" << std::endl;
                 while (opstack.back() != "(") {
-                    std::cout << "close bracket" << std::endl;
                     if (opstack.size() == 0) std::cout << "error: mismatched parenthesis!\n";
-                    temp = opstack.back();
+                    output.push_back(opstack.back());
                     opstack.pop_back();
-                    output.push_back(temp);
                 }
-                if (opstack.back() != "(") std::cout << "something wrong";
+
+                if (opstack.back() != "(")
+                    std::cout << "ono\n";
+                
                 opstack.pop_back();
-                if (functions.contains(opstack.back())) {
-                    temp = opstack.back();
+
+                if (functions.contains(opstack.back())) {                    
+                    output.push_back(opstack.back());
                     opstack.pop_back();
-                    output.push_back(temp);
                 }
             }
         }
     }
     for (int i = 0; i < opstack.size(); i++) {
-        std::string temp = opstack.back();
+        std::string a = opstack.back();
         opstack.pop_back();
-        output.push_back(temp);
+        output.push_back(a);
     }
 
-    for (int i = 0; i < output.size(); i++) {
-        std::cout << output[i] << " ";
-    }
-
-    std::cout << std::endl;
+    std::cout << "final postfix: "; printStringArray(output); std::cout << std::endl;
 }
