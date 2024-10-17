@@ -20,15 +20,15 @@ std::optional<double> getNumber(std::string& input) {
 }
 
 std::string removeTrailingZeros(std::string str) {
-  size_t decimal = str.find('.');
-  if (decimal == std::string::npos)
-    return str;
+    size_t decimal = str.find('.');
+    if (decimal == std::string::npos)
+        return str;
 
-  size_t last = str.find_last_not_of('0');
-  if (last == decimal) {
-    return str.substr(0, decimal);
-  }
-  return str.substr(0, last + 1);
+    size_t last = str.find_last_not_of('0');
+    if (last == decimal) {
+        return str.substr(0, decimal);
+    }
+    return str.substr(0, last + 1);
 }
 
 void printStringArray(std::vector<std::string>& thing) {
