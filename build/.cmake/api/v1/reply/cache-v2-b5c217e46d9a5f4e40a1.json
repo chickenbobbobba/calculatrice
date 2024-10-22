@@ -15,7 +15,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/usr/bin/addr2line"
+			"value" : "/usr/bin/llvm-addr2line"
 		},
 		{
 			"name" : "CMAKE_AR",
@@ -31,7 +31,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/usr/bin/ar"
+			"value" : "/usr/bin/llvm-ar"
 		},
 		{
 			"name" : "CMAKE_BUILD_TYPE",
@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/samb/vscode/calculatrice/build"
+			"value" : "/home/samb/vscode/calculatrice/calculatrice/build"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -159,7 +159,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "CMAKE_CXX_COMPILER_AR-NOTFOUND"
+			"value" : "/usr/bin/llvm-ar"
 		},
 		{
 			"name" : "CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS",
@@ -191,7 +191,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "CMAKE_CXX_COMPILER_RANLIB-NOTFOUND"
+			"value" : "/usr/bin/llvm-ranlib"
 		},
 		{
 			"name" : "CMAKE_CXX_FLAGS",
@@ -303,7 +303,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "CMAKE_C_COMPILER_AR-NOTFOUND"
+			"value" : "/usr/bin/llvm-ar"
 		},
 		{
 			"name" : "CMAKE_C_COMPILER_CLANG_SCAN_DEPS",
@@ -335,7 +335,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "CMAKE_C_COMPILER_RANLIB-NOTFOUND"
+			"value" : "/usr/bin/llvm-ranlib"
 		},
 		{
 			"name" : "CMAKE_C_FLAGS",
@@ -431,7 +431,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "CMAKE_DLLTOOL-NOTFOUND"
+			"value" : "/usr/bin/llvm-dlltool"
 		},
 		{
 			"name" : "CMAKE_EDIT_COMMAND",
@@ -571,7 +571,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/samb/vscode/calculatrice/build/CMakeFiles/pkgRedirects"
+			"value" : "/home/samb/vscode/calculatrice/calculatrice/build/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -631,7 +631,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/samb/vscode/calculatrice"
+			"value" : "/home/samb/vscode/calculatrice/calculatrice"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -671,7 +671,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/usr/bin/ld.lld"
+			"value" : "/usr/bin/ld"
 		},
 		{
 			"name" : "CMAKE_MAKE_PROGRAM",
@@ -783,7 +783,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/usr/bin/nm"
+			"value" : "/usr/bin/llvm-nm"
 		},
 		{
 			"name" : "CMAKE_NUMBER_OF_MAKEFILES",
@@ -811,7 +811,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/usr/bin/objcopy"
+			"value" : "/usr/bin/llvm-objcopy"
 		},
 		{
 			"name" : "CMAKE_OBJDUMP",
@@ -827,7 +827,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/usr/bin/objdump"
+			"value" : "/usr/bin/llvm-objdump"
 		},
 		{
 			"name" : "CMAKE_PLATFORM_INFO_INITIALIZED",
@@ -951,7 +951,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/usr/bin/ranlib"
+			"value" : "/usr/bin/llvm-ranlib"
 		},
 		{
 			"name" : "CMAKE_READELF",
@@ -967,7 +967,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/usr/bin/readelf"
+			"value" : "/usr/bin/llvm-readelf"
 		},
 		{
 			"name" : "CMAKE_ROOT",
@@ -1187,7 +1187,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/usr/bin/strip"
+			"value" : "/usr/bin/llvm-strip"
 		},
 		{
 			"name" : "CMAKE_TAPI",
@@ -1255,7 +1255,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/samb/vscode/calculatrice/build"
+			"value" : "/home/samb/vscode/calculatrice/calculatrice/build"
 		},
 		{
 			"name" : "calc_IS_TOP_LEVEL",
@@ -1279,7 +1279,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/samb/vscode/calculatrice"
+			"value" : "/home/samb/vscode/calculatrice/calculatrice"
 		}
 	],
 	"kind" : "cache",

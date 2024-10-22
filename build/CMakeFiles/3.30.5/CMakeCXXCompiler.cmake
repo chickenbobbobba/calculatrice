@@ -24,11 +24,11 @@ set(CMAKE_CXX_SIMULATE_VERSION "")
 
 
 
-set(CMAKE_AR "/usr/bin/ar")
-set(CMAKE_CXX_COMPILER_AR "CMAKE_CXX_COMPILER_AR-NOTFOUND")
-set(CMAKE_RANLIB "/usr/bin/ranlib")
-set(CMAKE_CXX_COMPILER_RANLIB "CMAKE_CXX_COMPILER_RANLIB-NOTFOUND")
-set(CMAKE_LINKER "/usr/bin/ld.lld")
+set(CMAKE_AR "/usr/bin/llvm-ar")
+set(CMAKE_CXX_COMPILER_AR "/usr/bin/llvm-ar")
+set(CMAKE_RANLIB "/usr/bin/llvm-ranlib")
+set(CMAKE_CXX_COMPILER_RANLIB "/usr/bin/llvm-ranlib")
+set(CMAKE_LINKER "/usr/bin/ld")
 set(CMAKE_LINKER_LINK "")
 set(CMAKE_LINKER_LLD "")
 set(CMAKE_CXX_COMPILER_LINKER "/usr/bin/ld")

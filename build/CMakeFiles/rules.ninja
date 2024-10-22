@@ -72,7 +72,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /usr/bin/cmake --regenerate-during-build -S/home/samb/vscode/calculatrice -B/home/samb/vscode/calculatrice/build
+  command = /usr/bin/cmake --regenerate-during-build -S/home/samb/vscode/calculatrice/calculatrice -B/home/samb/vscode/calculatrice/calculatrice/build
   description = Re-running CMake...
   generator = 1
 

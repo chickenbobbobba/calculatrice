@@ -9,6 +9,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <variant>
 #include <vector>
 
 std::optional<double> getNumber(std::string& input) {
@@ -31,12 +32,20 @@ std::string removeTrailingZeros(std::string str) {
     return str.substr(0, last + 1);
 }
 
-void printStringArray(std::vector<std::string>& thing) {
+void printStringArray(std::vector<std::string> thing) {
     for (int i = 0; i < thing.size(); i++) {
-        if (getNumber(thing[i]) != std::nullopt)
-            std::cout << removeTrailingZeros(thing[i]) << " ";
-        else
-            std::cout << thing[i] << " ";
+        std::cout << thing[i] << " ";
+    }
+}
+
+void printTokenArray(const std::vector<std::variant<float, std::string>>& tokens) {
+    for (const auto& token : tokens) {
+        if (std::holds_alternative<float>(token)) {
+            std::cout << "f" << std::get<float>(token);
+        } else {
+            std::cout << "s" << std::get<std::string>(token);
+        }
+        std::cout << ".";
     }
 }
 
@@ -79,9 +88,10 @@ int main(int, char**) {
     std::string equation;
     std::getline(std::cin, equation);
 
-    std::vector<std::string> tokenin;
+    std::vector<std::variant<float, std::string>> tokenin;
     std::string numberbuffer = "";
     std::string operbuffer = "";
+    std::vector<std::string> strbuffer = {};
     
     /* parse and tokenise input to tokenin */
 
@@ -89,102 +99,111 @@ int main(int, char**) {
         if (equation[i] == ' ') continue;                 /* ignore all spaces */
 
         if (isdigit(equation[i]) || equation[i] == '.') {
-            numberbuffer.push_back(equation[i]);          /* input all numbers and decimal points */
+            numberbuffer += equation[i];                  /* input all numbers and decimal points */
             continue;
         }
 
         operbuffer += equation[i];
         if (operators.contains(operbuffer) || functions.contains(operbuffer)) {   /* extra check to make sure not to */
             if (numberbuffer != "")                                               /* accidentally add an empty token */
-                tokenin.push_back(numberbuffer);
+                strbuffer.push_back(numberbuffer);
             numberbuffer = "";
-            tokenin.push_back(operbuffer);
+            strbuffer.push_back(operbuffer);
             operbuffer = "";
         }
     }
-    tokenin.push_back(numberbuffer);
+
+    strbuffer.push_back(numberbuffer);
+    tokenin.resize(strbuffer.size());
+    for (int i = 0; i < strbuffer.size(); i++) {
+        std::optional<float> temp = getNumber(strbuffer[i]);
+        if (temp != std::nullopt) {                         /* is it a number? */ 
+            tokenin[i] = *temp;
+        } else {
+            tokenin[i] = strbuffer[i];
+        }
+    }
 
     /* print tokenised input */
-
+    
     std::cout << "tokenised: ";
-    for (auto i : tokenin) {
-        std::cout << i << ".";
-    }   std::cout << "\n";
+
+    printTokenArray(tokenin); std::cout << "\n";
 
     /* shunting yard algorithm 
        https://en.wikipedia.org/wiki/Shunting_yard_algorithm 
     */
 
-    std::vector<std::string> output;  /* output stack. when only 1 number left here, solve is complete. */
-    std::vector<std::string> opstack; /* operator stack */
-    std::string temp;
+    std::vector<std::variant<float, std::string>> poststack;  /* output stack. when only 1 number left here, solve is complete. */
+    std::vector<std::variant<float, std::string>> opstack;  /* operator stack */
+
     opstack.push_back("_");
 
     for (int i = 0; i < tokenin.size(); i++) {
-
-        std::string currentToken = tokenin[i]; 
-        std::cout << i << " " << currentToken << " |#| "; printStringArray(output); std::cout << "|#| "; printStringArray(opstack); std::cout << std::endl;
-        std::optional<double> number = getNumber(tokenin[i]);
-        std::string topElement;
         
-        if (number != std::nullopt) {
-            output.push_back(std::to_string(*number));
-        } else {
-            if (functions.contains(currentToken)) {
-                opstack.push_back(currentToken);
+        std::string currentToken = "";
+        if (std::holds_alternative<float>(tokenin[i])) {
+            float numToken = std::get<float>(tokenin[i]);
+            poststack.push_back(numToken);
+            continue;
+        }
 
-            } else if (operators.contains(currentToken) && !operatorIgnoreList.contains(currentToken)) {
-                if (opstack.size() == 0) {
-                    topElement = "_";
-                } else {
-                    topElement = opstack.back();
-                }
-                while (topElement != "(" && topElement != "_" && 
-                      (operators[topElement] > operators[currentToken] 
-                      || (operators[currentToken] == operators[topElement] 
-                      && !rightAssociated.contains(currentToken)))) {
-                        /* jesus christ thats some logic and a half */
-                    
-                    output.push_back(opstack.back());
-                    opstack.pop_back();
-                    topElement = opstack.back();
-                }
-                opstack.push_back(currentToken);
+        currentToken = std::get<std::string>(tokenin[i]);
 
-            } else if (currentToken == ",") {
-                while (opstack.back() != "(") {
-                    temp = opstack.back();
-                    opstack.pop_back();
-                    output.push_back(temp);
-                }
+        std::string topElement;
+        std::cout << i << " " << currentToken << " |#| "; printTokenArray(poststack); std::cout << " |#| "; printTokenArray(opstack); std::cout << std::endl;
+        
+        if (functions.contains(currentToken)) {
+            opstack.push_back(currentToken);
 
-            } else if (currentToken == "(") {
-                opstack.push_back("(");
-
-            } else if (currentToken == ")") {
-                while (opstack.back() != "(") {
-                    if (opstack.size() == 0) std::cout << "error: mismatched parenthesis!\n";
-                    output.push_back(opstack.back());
-                    opstack.pop_back();
-                }
-
-                if (opstack.back() != "(")
-                    std::cout << "ono\n";
+        } else if (operators.contains(currentToken) && !operatorIgnoreList.contains(currentToken)) {
+            if (opstack.size() == 0) {
+                topElement = "_";
+            } else {
+                topElement = std::get<std::string>(opstack.back());
+            }
+            while (topElement != "(" && topElement != "_" && 
+                  (operators[topElement] > operators[currentToken] 
+                  || (operators[currentToken] == operators[topElement] 
+                  && !rightAssociated.contains(currentToken)))) {
                 
+                poststack.push_back(opstack.back());
                 opstack.pop_back();
+                topElement = std::get<std::string>(opstack.back());
+            }
+            opstack.push_back(currentToken);
 
-                if (functions.contains(opstack.back())) {                    
-                    output.push_back(opstack.back());
-                    opstack.pop_back();
-                }
+        } else if (currentToken == ",") {
+            while (std::get<std::string>(opstack.back()) != "(") {
+                poststack.push_back(opstack.back());
+                opstack.pop_back();
+            }
+
+        } else if (currentToken == "(") {
+            opstack.push_back("(");
+
+        } else if (currentToken == ")") {
+            while (std::get<std::string>(opstack.back()) != "(") {
+                if (opstack.size() == 0) std::cout << "error: mismatched parenthesis!\n";
+                poststack.push_back(opstack.back());
+                opstack.pop_back();
+            }
+
+            if (std::get<std::string>(opstack.back()) != "(")
+                std::cout << "ono\n";
+              
+            opstack.pop_back();
+            if (functions.contains(std::get<std::string>(opstack.back()))) {                    
+                poststack.push_back(opstack.back());
+                opstack.pop_back();
             }
         }
     }
-    for (int i = 0; i < opstack.size(); i++) {
-        std::string a = opstack.back();
+
+    while (!opstack.empty()) {
+        poststack.push_back(opstack.back());
         opstack.pop_back();
-        output.push_back(a);
     }
 
-    std::cout << "final postfix: "; printStringArray(output); std::cout << std::endl;
+    std::cout << "final postfix: "; printTokenArray(poststack); std::cout << std::endl;
 }

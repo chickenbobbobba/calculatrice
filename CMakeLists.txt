@@ -6,8 +6,5 @@ set(CMAKE_CXX_STANDARD 23)
 add_executable(calc 
     main.cpp
     main.hpp
-    
-    
-    
-    )
+)
 

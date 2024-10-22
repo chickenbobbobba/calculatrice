@@ -1,3 +1,3 @@
-/home/samb/vscode/calculatrice/build/CMakeFiles/calc.dir
-/home/samb/vscode/calculatrice/build/CMakeFiles/edit_cache.dir
-/home/samb/vscode/calculatrice/build/CMakeFiles/rebuild_cache.dir
+/home/samb/vscode/calculatrice/calculatrice/build/CMakeFiles/calc.dir
+/home/samb/vscode/calculatrice/calculatrice/build/CMakeFiles/edit_cache.dir
+/home/samb/vscode/calculatrice/calculatrice/build/CMakeFiles/rebuild_cache.dir

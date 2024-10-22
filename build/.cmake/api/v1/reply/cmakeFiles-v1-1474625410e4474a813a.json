@@ -150,8 +150,8 @@
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "/home/samb/vscode/calculatrice/build",
-		"source" : "/home/samb/vscode/calculatrice"
+		"build" : "/home/samb/vscode/calculatrice/calculatrice/build",
+		"source" : "/home/samb/vscode/calculatrice/calculatrice"
 	},
 	"version" : 
 	{
