@@ -44,11 +44,11 @@ void printStringArray(const std::vector<std::string>& thing) {
 void printTokenArray(const equation& tokens) {
     for (const auto& token : tokens) {
         if (std::holds_alternative<double>(token)) {
-            std::cout << "f" << std::get<double>(token);
+            std::cout << "f." << std::get<double>(token);
         } else {
-            std::cout << "s" << std::get<std::string>(token);
+            std::cout << "s." << std::get<std::string>(token);
         }
-        std::cout << ".";
+        std::cout << " ";
     }
 }
 
@@ -68,6 +68,8 @@ std::unordered_map<std::string, int> operators = {
     {"!", 9},
     {"^", 9},
     {"_", -1},
+    {"log", 9},
+    {",", 10}
 };
 
 std::unordered_set<std::string> operatorIgnoreList = {
@@ -165,12 +167,22 @@ equation convertToPostfix(const equation& tokenin) {
     return poststack;
 }
 
-std::unordered_map<std::string, std::function<double(double,double)>> opmap {
+std::unordered_map<std::string, std::function<double(double,double)>> twoOpMap {
     {"+", [](double a, double b) { return b + a; }},
     {"-", [](double a, double b) { return b - a; }},
     {"*", [](double a, double b) { return b * a; }},
     {"/", [](double a, double b) { return b / a; }},
     {"%", [](double a, double b) { return std::fmod(b,a); }},
+    {"^", [](double a, double b) { return pow(b, a); }},
+    {"log", [](double a, double b) { return log(a) / log(b); }},
+};
+
+std::unordered_map<std::string, std::function<double(double)>> singOpMap {
+    {"ln", [](double a) { return log(a); }},
+    {"sin", [](double a) { return sin(a); }},
+    {"cos", [](double a) { return cos(a); }},
+    {"tan", [](double a) { return tan(a); }},
+    {"!", [](double a) { return std::tgamma(a+1); }},
 };
 
 double resolvePostfix(const equation& postfixeq) {
@@ -182,11 +194,18 @@ double resolvePostfix(const equation& postfixeq) {
             ansstack.push_back(postfixeq[i]);
         } else {
             if (std::get<std::string>(postfixeq[i]) == "_") continue;
-            temp1 = std::get<double>(ansstack.back());
-            ansstack.pop_back();
-            temp2 = std::get<double>(ansstack.back());
-            ansstack.pop_back();
-            ansstack.push_back(opmap[std::get<std::string>(postfixeq[i])](temp1, temp2));
+            if (twoOpMap.contains(std::get<std::string>(postfixeq[i]))) {
+                temp1 = std::get<double>(ansstack.back());
+                ansstack.pop_back();
+                temp2 = std::get<double>(ansstack.back());
+                ansstack.pop_back();
+                ansstack.push_back(twoOpMap[std::get<std::string>(postfixeq[i])](temp1, temp2));
+
+            } else if (singOpMap.contains(std::get<std::string>(postfixeq[i]))) {
+                temp1 = std::get<double>(ansstack.back());
+                ansstack.pop_back();
+                ansstack.push_back(singOpMap[std::get<std::string>(postfixeq[i])](temp1));
+            }
         }
         // std::cout << i << " "; printTokenArray(ansstack); std::cout << std::endl;
     }
@@ -208,6 +227,11 @@ int main(int, char**) {
     for (int i = 0; i < equationin.size(); i++) {
         if (equationin[i] == ' ') continue;                 /* ignore all spaces */
 
+        if (numberbuffer.size() == 0 && equationin[i] == '-') {
+            numberbuffer += '-';
+            continue;
+        } 
+
         if (isdigit(equationin[i]) || equationin[i] == '.') {
             numberbuffer += equationin[i];                  /* input all numbers and decimal points */
             continue;
@@ -220,6 +244,16 @@ int main(int, char**) {
             numberbuffer = "";
             strbuffer.push_back(operbuffer);
             operbuffer = "";
+        }
+
+        if (strbuffer.back() == "-" && strbuffer[strbuffer.size()-2] == "-") { /* all this here is because of idiotic edge cases that */
+            strbuffer.pop_back();                                              /* nobody is gonna encounter but i have to add or people */
+            strbuffer.pop_back();                                              /* will complain  */
+            strbuffer.push_back("+");
+        }
+
+        if (strbuffer.back() == "+" && strbuffer[strbuffer.size()-2] == "+") {
+            strbuffer.pop_back();
         }
     }
 
