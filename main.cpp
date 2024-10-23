@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstddef>
 #include <exception>
+#include <functional>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -12,7 +13,9 @@
 #include <variant>
 #include <vector>
 
-std::optional<double> getNumber(std::string& input) {
+using equation = std::vector<std::variant<double, std::string>>;
+
+std::optional<double> getNumber(const std::string& input) {
     try {
         return std::stod(input);
     } catch(std::exception a) {
@@ -20,7 +23,7 @@ std::optional<double> getNumber(std::string& input) {
     }
 }
 
-std::string removeTrailingZeros(std::string str) {
+std::string removeTrailingZeros(const std::string& str) {
     size_t decimal = str.find('.');
     if (decimal == std::string::npos)
         return str;
@@ -32,16 +35,16 @@ std::string removeTrailingZeros(std::string str) {
     return str.substr(0, last + 1);
 }
 
-void printStringArray(std::vector<std::string> thing) {
+void printStringArray(const std::vector<std::string>& thing) {
     for (int i = 0; i < thing.size(); i++) {
         std::cout << thing[i] << " ";
     }
 }
 
-void printTokenArray(const std::vector<std::variant<float, std::string>>& tokens) {
+void printTokenArray(const equation& tokens) {
     for (const auto& token : tokens) {
-        if (std::holds_alternative<float>(token)) {
-            std::cout << "f" << std::get<float>(token);
+        if (std::holds_alternative<double>(token)) {
+            std::cout << "f" << std::get<double>(token);
         } else {
             std::cout << "s" << std::get<std::string>(token);
         }
@@ -49,101 +52,55 @@ void printTokenArray(const std::vector<std::variant<float, std::string>>& tokens
     }
 }
 
-int main(int, char**) {
 
     /* hashset used to access elements without using integer values. 
        also editable at runtime unlike an enum.
        follows the standard coding operators, eg * instead of X */
 
-    std::unordered_map<std::string, int> operators = {
-        {"+", 0},
-        {"-", 0},
-        {"/", 8},
-        {"*", 8},
-        {"(", 10},
-        {")", 10},
-        {"%", 8},
-        {"!", 9},
-        {"^", 9},
-        {"_", -1},
-    };
+std::unordered_map<std::string, int> operators = {
+    {"+", 0},
+    {"-", 0},
+    {"/", 8},
+    {"*", 8},
+    {"(", 10},
+    {")", 10},
+    {"%", 8},
+    {"!", 9},
+    {"^", 9},
+    {"_", -1},
+};
 
-    std::unordered_set<std::string> operatorIgnoreList = {
+std::unordered_set<std::string> operatorIgnoreList = {
         "(",
         ")",
-    };
+};
 
-    std::unordered_set<std::string> functions = {
-        "ln",
-        "sin",
-        "cos",
-        "tan",
-    };
+std::unordered_set<std::string> functions = {
+    "ln",
+    "sin",
+    "cos",
+    "tan",
+};
 
-    std::unordered_set<std::string> rightAssociated = {
-        "^",
-    };
+std::unordered_set<std::string> rightAssociated = {
+    "^",
+};
 
-    std::cout << "equation:  ";
-    std::string equation;
-    std::getline(std::cin, equation);
-
-    std::vector<std::variant<float, std::string>> tokenin;
-    std::string numberbuffer = "";
-    std::string operbuffer = "";
-    std::vector<std::string> strbuffer = {};
-    
-    /* parse and tokenise input to tokenin */
-
-    for (int i = 0; i < equation.size(); i++) {
-        if (equation[i] == ' ') continue;                 /* ignore all spaces */
-
-        if (isdigit(equation[i]) || equation[i] == '.') {
-            numberbuffer += equation[i];                  /* input all numbers and decimal points */
-            continue;
-        }
-
-        operbuffer += equation[i];
-        if (operators.contains(operbuffer) || functions.contains(operbuffer)) {   /* extra check to make sure not to */
-            if (numberbuffer != "")                                               /* accidentally add an empty token */
-                strbuffer.push_back(numberbuffer);
-            numberbuffer = "";
-            strbuffer.push_back(operbuffer);
-            operbuffer = "";
-        }
-    }
-
-    strbuffer.push_back(numberbuffer);
-    tokenin.resize(strbuffer.size());
-    for (int i = 0; i < strbuffer.size(); i++) {
-        std::optional<float> temp = getNumber(strbuffer[i]);
-        if (temp != std::nullopt) {                         /* is it a number? */ 
-            tokenin[i] = *temp;
-        } else {
-            tokenin[i] = strbuffer[i];
-        }
-    }
-
-    /* print tokenised input */
-    
-    std::cout << "tokenised: ";
-
-    printTokenArray(tokenin); std::cout << "\n";
+equation convertToPostfix(const equation& tokenin) {
+    equation poststack;  /* output stack. when only 1 number left here, solve is complete. */
+    equation opstack;  /* operator stack */
 
     /* shunting yard algorithm 
        https://en.wikipedia.org/wiki/Shunting_yard_algorithm 
     */
-
-    std::vector<std::variant<float, std::string>> poststack;  /* output stack. when only 1 number left here, solve is complete. */
-    std::vector<std::variant<float, std::string>> opstack;  /* operator stack */
 
     opstack.push_back("_");
 
     for (int i = 0; i < tokenin.size(); i++) {
         
         std::string currentToken = "";
-        if (std::holds_alternative<float>(tokenin[i])) {
-            float numToken = std::get<float>(tokenin[i]);
+        if (std::holds_alternative<double>(tokenin[i])) {
+            double numToken = std::get<double>(tokenin[i]);
             poststack.push_back(numToken);
             continue;
         }
@@ -151,7 +108,7 @@ int main(int, char**) {
         currentToken = std::get<std::string>(tokenin[i]);
 
         std::string topElement;
-        std::cout << i << " " << currentToken << " |#| "; printTokenArray(poststack); std::cout << " |#| "; printTokenArray(opstack); std::cout << std::endl;
+        // std::cout << i << " " << currentToken << " |#| "; printTokenArray(poststack); std::cout << " |#| "; printTokenArray(opstack); std::cout << std::endl;
         
         if (functions.contains(currentToken)) {
             opstack.push_back(currentToken);
@@ -205,5 +162,86 @@ int main(int, char**) {
         opstack.pop_back();
     }
 
-    std::cout << "final postfix: "; printTokenArray(poststack); std::cout << std::endl;
+    return poststack;
+}
+
+std::unordered_map<std::string, std::function<double(double,double)>> opmap {
+    {"+", [](double a, double b) { return b + a; }},
+    {"-", [](double a, double b) { return b - a; }},
+    {"*", [](double a, double b) { return b * a; }},
+    {"/", [](double a, double b) { return b / a; }},
+    {"%", [](double a, double b) { return std::fmod(b,a); }},
+};
+
+double resolvePostfix(const equation& postfixeq) {
+    equation ansstack = {};
+    double temp1;
+    double temp2;
+    for (int i = 0; i < postfixeq.size(); i++) {
+        if (std::holds_alternative<double>(postfixeq[i])) {
+            ansstack.push_back(postfixeq[i]);
+        } else {
+            if (std::get<std::string>(postfixeq[i]) == "_") continue;
+            temp1 = std::get<double>(ansstack.back());
+            ansstack.pop_back();
+            temp2 = std::get<double>(ansstack.back());
+            ansstack.pop_back();
+            ansstack.push_back(opmap[std::get<std::string>(postfixeq[i])](temp1, temp2));
+        }
+        // std::cout << i << " "; printTokenArray(ansstack); std::cout << std::endl;
+    }
+    return std::get<double>(ansstack.front());
+}
+
+int main(int, char**) {
+    std::cout << "equation:  ";
+    std::string equationin;
+    std::getline(std::cin, equationin);
+
+    equation tokenin;
+    std::string numberbuffer = "";
+    std::string operbuffer = "";
+    std::vector<std::string> strbuffer = {};
+    
+    /* parse and tokenise input to tokenin */
+
+    for (int i = 0; i < equationin.size(); i++) {
+        if (equationin[i] == ' ') continue;                 /* ignore all spaces */
+
+        if (isdigit(equationin[i]) || equationin[i] == '.') {
+            numberbuffer += equationin[i];                  /* input all numbers and decimal points */
+            continue;
+        }
+
+        operbuffer += equationin[i];
+        if (operators.contains(operbuffer) || functions.contains(operbuffer)) {   /* extra check to make sure not to */
+            if (numberbuffer != "")                                               /* accidentally add an empty token */
+                strbuffer.push_back(numberbuffer);
+            numberbuffer = "";
+            strbuffer.push_back(operbuffer);
+            operbuffer = "";
+        }
+    }
+
+    strbuffer.push_back(numberbuffer);
+    tokenin.resize(strbuffer.size());
+    for (int i = 0; i < strbuffer.size(); i++) {
+        std::optional<double> temp = getNumber(strbuffer[i]);
+        if (temp != std::nullopt) {                         /* is it a number? */ 
+            tokenin[i] = *temp;
+        } else {
+            tokenin[i] = strbuffer[i];
+        }
+    }
+
+    /* print tokenised input */
+    
+    std::cout << "tokenised: ";
+
+    printTokenArray(tokenin); std::cout << "\n";
+    equation postfixeq = convertToPostfix(tokenin);
+
+    std::cout << "postfix: "; printTokenArray(postfixeq); std::cout << std::endl;
+    float answer = resolvePostfix(postfixeq);
+    std::cout << "answer: " << answer << std::endl;
 }
