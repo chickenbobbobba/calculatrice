@@ -241,7 +241,7 @@ int main(int, char**) {
     printTokenArray(tokenin); std::cout << "\n";
     equation postfixeq = convertToPostfix(tokenin);
 
-    std::cout << "postfix: "; printTokenArray(postfixeq); std::cout << std::endl;
+    std::cout << "postfix:   "; printTokenArray(postfixeq); std::cout << std::endl;
     float answer = resolvePostfix(postfixeq);
-    std::cout << "answer: " << answer << std::endl;
+    std::cout << "answer:    " << answer << std::endl;
 }
