@@ -168,21 +168,21 @@ equation convertToPostfix(const equation& tokenin) {
 }
 
 std::unordered_map<std::string, std::function<double(double,double)>> twoOpMap {
-    {"+", [](double a, double b) { return b + a; }},
-    {"-", [](double a, double b) { return b - a; }},
-    {"*", [](double a, double b) { return b * a; }},
-    {"/", [](double a, double b) { return b / a; }},
-    {"%", [](double a, double b) { return std::fmod(b,a); }},
-    {"^", [](double a, double b) { return pow(b, a); }},
+    {"+",   [](double a, double b) { return b + a; }},
+    {"-",   [](double a, double b) { return b - a; }},
+    {"*",   [](double a, double b) { return b * a; }},
+    {"/",   [](double a, double b) { return b / a; }},
+    {"%",   [](double a, double b) { return std::fmod(b, a); }},
+    {"^",   [](double a, double b) { return pow(b, a); }},
     {"log", [](double a, double b) { return log(a) / log(b); }},
 };
 
 std::unordered_map<std::string, std::function<double(double)>> singOpMap {
-    {"ln", [](double a) { return log(a); }},
+    {"ln",  [](double a) { return log(a); }},
     {"sin", [](double a) { return sin(a); }},
     {"cos", [](double a) { return cos(a); }},
     {"tan", [](double a) { return tan(a); }},
-    {"!", [](double a) { return std::tgamma(a+1); }},
+    {"!",   [](double a) { return std::tgamma(a+1); }},
 };
 
 double resolvePostfix(const equation& postfixeq) {
@@ -225,6 +225,7 @@ int main(int, char**) {
     /* parse and tokenise input to tokenin */
 
     for (int i = 0; i < equationin.size(); i++) {
+        //std::cout << i << " " << equationin[i] << " | "; printStringArray(strbuffer); std::cout << std::endl;
         if (equationin[i] == ' ') continue;                 /* ignore all spaces */
 
         if (numberbuffer.size() == 0 && equationin[i] == '-') {
@@ -242,6 +243,9 @@ int main(int, char**) {
             if (numberbuffer != "")                                               /* accidentally add an empty token */
                 strbuffer.push_back(numberbuffer);
             numberbuffer = "";
+            if (strbuffer.size() > 0 && operbuffer == "(" && (getNumber(strbuffer.back()) != std::nullopt || strbuffer.back() == ")")) {
+                strbuffer.push_back("*");
+            }
             strbuffer.push_back(operbuffer);
             operbuffer = "";
         }
