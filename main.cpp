@@ -44,9 +44,9 @@ void printStringArray(const std::vector<std::string>& thing) {
 void printTokenArray(const equation& tokens) {
     for (const auto& token : tokens) {
         if (std::holds_alternative<double>(token)) {
-            std::cout << "f." << std::get<double>(token);
+            std::cout << "f_" << std::get<double>(token);
         } else {
-            std::cout << "s." << std::get<std::string>(token);
+            std::cout << "s_" << std::get<std::string>(token);
         }
         std::cout << " ";
     }
@@ -195,10 +195,19 @@ double resolvePostfix(const equation& postfixeq) {
         } else {
             if (std::get<std::string>(postfixeq[i]) == "_") continue;
             if (twoOpMap.contains(std::get<std::string>(postfixeq[i]))) {
-                temp1 = std::get<double>(ansstack.back());
-                ansstack.pop_back();
-                temp2 = std::get<double>(ansstack.back());
-                ansstack.pop_back();
+                if (ansstack.size() > 0) {
+                    temp1 = std::get<double>(ansstack.back());
+                    ansstack.pop_back();
+                } else {
+                    temp1 = 0;
+                }
+                if (ansstack.size() > 0) {
+                    temp2 = std::get<double>(ansstack.back());
+                    ansstack.pop_back();
+                } else {
+                    temp2 = 0;
+                }
+
                 ansstack.push_back(twoOpMap[std::get<std::string>(postfixeq[i])](temp1, temp2));
 
             } else if (singOpMap.contains(std::get<std::string>(postfixeq[i]))) {
@@ -225,7 +234,7 @@ int main(int, char**) {
     /* parse and tokenise input to tokenin */
 
     for (int i = 0; i < equationin.size(); i++) {
-        //std::cout << i << " " << equationin[i] << " | "; printStringArray(strbuffer); std::cout << std::endl;
+        // std::cout << i << " " << equationin[i] << " | "; printStringArray(strbuffer); std::cout << std::endl;
         if (equationin[i] == ' ') continue;                 /* ignore all spaces */
 
         if (numberbuffer.size() == 0 && equationin[i] == '-') {
@@ -250,6 +259,7 @@ int main(int, char**) {
             operbuffer = "";
         }
 
+        if (strbuffer.size() == 0) continue;
         if (strbuffer.back() == "-" && strbuffer[strbuffer.size()-2] == "-") { /* all this here is because of idiotic edge cases that */
             strbuffer.pop_back();                                              /* nobody is gonna encounter but i have to add or people */
             strbuffer.pop_back();                                              /* will complain  */
