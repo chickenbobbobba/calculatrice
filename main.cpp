@@ -222,72 +222,75 @@ double resolvePostfix(const equation& postfixeq) {
 }
 
 int main(int, char**) {
-    std::cout << "equation:  ";
-    std::string equationin;
-    std::getline(std::cin, equationin);
+    for (;;) {
+        std::cout << "equation:  ";
+        std::string equationin;
+        std::getline(std::cin, equationin);
 
-    equation tokenin;
-    std::string numberbuffer = "";
-    std::string operbuffer = "";
-    std::vector<std::string> strbuffer = {};
+        equation tokenin;
+        std::string numberbuffer = "";
+        std::string operbuffer = "";
+        std::vector<std::string> strbuffer = {};
     
-    /* parse and tokenise input to tokenin */
+        /* parse and tokenise input to tokenin */
 
-    for (int i = 0; i < equationin.size(); i++) {
-        // std::cout << i << " " << equationin[i] << " | "; printStringArray(strbuffer); std::cout << std::endl;
-        if (equationin[i] == ' ') continue;                 /* ignore all spaces */
+        for (int i = 0; i < equationin.size(); i++) {
+            // std::cout << i << " " << equationin[i] << " | "; printStringArray(strbuffer); std::cout << std::endl;
+            if (equationin[i] == ' ') continue;                 /* ignore all spaces */
 
-        if (numberbuffer.size() == 0 && equationin[i] == '-') {
-            numberbuffer += '-';
-            continue;
-        } 
+            if (numberbuffer.size() == 0 && equationin[i] == '-') {
+                numberbuffer += '-';
+                continue;
+            } 
 
-        if (isdigit(equationin[i]) || equationin[i] == '.') {
-            numberbuffer += equationin[i];                  /* input all numbers and decimal points */
-            continue;
-        }
-
-        operbuffer += equationin[i];
-        if (operators.contains(operbuffer) || functions.contains(operbuffer)) {   /* extra check to make sure not to */
-            if (numberbuffer != "")                                               /* accidentally add an empty token */
-                strbuffer.push_back(numberbuffer);
-            numberbuffer = "";
-            if (strbuffer.size() > 0 && operbuffer == "(" && (getNumber(strbuffer.back()) != std::nullopt || strbuffer.back() == ")")) {
-                strbuffer.push_back("*");
+            if (isdigit(equationin[i]) || equationin[i] == '.') {
+                numberbuffer += equationin[i];                  /* input all numbers and decimal points */
+                continue;
             }
-            strbuffer.push_back(operbuffer);
-            operbuffer = "";
+
+            operbuffer += equationin[i];
+            if (operators.contains(operbuffer) || functions.contains(operbuffer)) {   /* extra check to make sure not to */
+                if (numberbuffer != "")                                               /* accidentally add an empty token */
+                    strbuffer.push_back(numberbuffer);
+                numberbuffer = "";
+                if (strbuffer.size() > 0 && operbuffer == "(" && (getNumber(strbuffer.back()) != std::nullopt || strbuffer.back() == ")")) {
+                    strbuffer.push_back("*");
+                }
+                strbuffer.push_back(operbuffer);
+                operbuffer = "";
+            }
+
+            if (strbuffer.size() == 0) continue;
+            if (strbuffer.back() == "-" && strbuffer[strbuffer.size()-2] == "-") { /* all this here is because of idiotic edge cases that */
+                strbuffer.pop_back();                                              /* nobody is gonna encounter but i have to add or people */
+                strbuffer.pop_back();                                              /* will complain  */
+                strbuffer.push_back("+");
+            }
+
+            if (strbuffer.back() == "+" && strbuffer[strbuffer.size()-2] == "+") {
+                strbuffer.pop_back();
+            }
         }
 
-        if (strbuffer.size() == 0) continue;
-        if (strbuffer.back() == "-" && strbuffer[strbuffer.size()-2] == "-") { /* all this here is because of idiotic edge cases that */
-            strbuffer.pop_back();                                              /* nobody is gonna encounter but i have to add or people */
-            strbuffer.pop_back();                                              /* will complain  */
-            strbuffer.push_back("+");
+        strbuffer.push_back(numberbuffer);
+        tokenin.resize(strbuffer.size());
+        for (int i = 0; i < strbuffer.size(); i++) {
+            std::optional<double> temp = getNumber(strbuffer[i]);
+            if (temp != std::nullopt) {                         /* is it a number? */ 
+                tokenin[i] = *temp;
+            } else {
+                tokenin[i] = strbuffer[i];
+            }
         }
 
-        if (strbuffer.back() == "+" && strbuffer[strbuffer.size()-2] == "+") {
-            strbuffer.pop_back();
-        }
+        /* print tokenised input */
+        // std::cout << "tokenised: "; printTokenArray(tokenin); std::cout << "\n";
+
+        equation postfixeq = convertToPostfix(tokenin);
+
+        // std::cout << "postfix:   "; printTokenArray(postfixeq); std::cout << std::endl;
+        float answer = resolvePostfix(postfixeq);
+        std::cout << "answer:    " << answer << std::endl;
+
     }
-
-    strbuffer.push_back(numberbuffer);
-    tokenin.resize(strbuffer.size());
-    for (int i = 0; i < strbuffer.size(); i++) {
-        std::optional<double> temp = getNumber(strbuffer[i]);
-        if (temp != std::nullopt) {                         /* is it a number? */ 
-            tokenin[i] = *temp;
-        } else {
-            tokenin[i] = strbuffer[i];
-        }
-    }
-
-    /* print tokenised input */
-    // std::cout << "tokenised: "; printTokenArray(tokenin); std::cout << "\n";
-
-    equation postfixeq = convertToPostfix(tokenin);
-
-    // std::cout << "postfix:   "; printTokenArray(postfixeq); std::cout << std::endl;
-    float answer = resolvePostfix(postfixeq);
-    std::cout << "answer:    " << answer << std::endl;
 }
