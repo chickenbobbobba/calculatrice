@@ -283,13 +283,11 @@ int main(int, char**) {
     }
 
     /* print tokenised input */
-    
-    std::cout << "tokenised: ";
+    // std::cout << "tokenised: "; printTokenArray(tokenin); std::cout << "\n";
 
-    printTokenArray(tokenin); std::cout << "\n";
     equation postfixeq = convertToPostfix(tokenin);
 
-    std::cout << "postfix:   "; printTokenArray(postfixeq); std::cout << std::endl;
+    // std::cout << "postfix:   "; printTokenArray(postfixeq); std::cout << std::endl;
     float answer = resolvePostfix(postfixeq);
     std::cout << "answer:    " << answer << std::endl;
 }
