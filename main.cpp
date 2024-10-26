@@ -238,7 +238,7 @@ int main(int, char**) {
             // std::cout << i << " " << equationin[i] << " | "; printStringArray(strbuffer); std::cout << std::endl;
             if (equationin[i] == ' ') continue;                 /* ignore all spaces */
 
-            if (numberbuffer.size() == 0 && equationin[i] == '-') {
+            if (numberbuffer.size() == 0 && equationin[i] == '-' && strbuffer.back() != "(" && strbuffer.back() != ")") {
                 numberbuffer += '-';
                 continue;
             } 
@@ -284,11 +284,11 @@ int main(int, char**) {
         }
 
         /* print tokenised input */
-        // std::cout << "tokenised: "; printTokenArray(tokenin); std::cout << "\n";
+         std::cout << "tokenised: "; printTokenArray(tokenin); std::cout << "\n";
 
         equation postfixeq = convertToPostfix(tokenin);
 
-        // std::cout << "postfix:   "; printTokenArray(postfixeq); std::cout << std::endl;
+         std::cout << "postfix:   "; printTokenArray(postfixeq); std::cout << std::endl;
         float answer = resolvePostfix(postfixeq);
         std::cout << "answer:    " << answer << std::endl;
 
