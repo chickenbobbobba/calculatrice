@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <exception>
 #include <functional>
+#include <iomanip>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -82,6 +83,7 @@ std::unordered_set<std::string> functions = {
     "sin",
     "cos",
     "tan",
+    "sqrt",
 };
 
 std::unordered_set<std::string> rightAssociated = {
@@ -183,6 +185,7 @@ std::unordered_map<std::string, std::function<double(double)>> singOpMap {
     {"cos", [](double a) { return cos(a); }},
     {"tan", [](double a) { return tan(a); }},
     {"!",   [](double a) { return std::tgamma(a+1); }},
+    {"sqrt",[](double a) { return pow(a, 0.5); }},
 };
 
 double resolvePostfix(const equation& postfixeq) {
@@ -289,8 +292,7 @@ int main(int, char**) {
         equation postfixeq = convertToPostfix(tokenin);
 
          std::cout << "postfix:   "; printTokenArray(postfixeq); std::cout << std::endl;
-        float answer = resolvePostfix(postfixeq);
-        std::cout << "answer:    " << answer << std::endl;
-
+        double answer = resolvePostfix(postfixeq);
+        std::cout << std::setprecision(8) << "answer:    " << answer << std::endl;
     }
 }
