@@ -293,6 +293,6 @@ int main(int, char**) {
 
          std::cout << "postfix:   "; printTokenArray(postfixeq); std::cout << std::endl;
         double answer = resolvePostfix(postfixeq);
-        std::cout << std::setprecision(8) << "answer:    " << answer << std::endl;
+        std::cout << std::setprecision(10) << "answer:    " << answer << std::endl;
     }
 }
