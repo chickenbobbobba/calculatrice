@@ -61,16 +61,16 @@ void printTokenArray(const equation& tokens) {
 std::unordered_map<std::string, int> operators = {
     {"+", 0},
     {"-", 0},
-    {"/", 8},
-    {"*", 8},
-    {"(", 10},
-    {")", 10},
-    {"%", 8},
-    {"!", 9},
-    {"^", 9},
+    {"/", 1},
+    {"*", 1},
+    {"(", 3},
+    {")", 3},
+    {"%", 1},
+    {"!", 2},
+    {"^", 2},
     {"_", -1},
-    {"log", 9},
-    {",", 10}
+    {"log", 2},
+    {",", 3}
 };
 
 std::unordered_set<std::string> operatorIgnoreList = {
@@ -186,6 +186,7 @@ std::unordered_map<std::string, std::function<double(double)>> singOpMap {
     {"tan", [](double a) { return tan(a); }},
     {"!",   [](double a) { return std::tgamma(a+1); }},
     {"sqrt",[](double a) { return pow(a, 0.5); }},
+
 };
 
 double resolvePostfix(const equation& postfixeq) {
@@ -224,67 +225,73 @@ double resolvePostfix(const equation& postfixeq) {
     return std::get<double>(ansstack.front());
 }
 
-int main(int, char**) {
+equation parseEquasion(const std::string& equationin) {
+    equation tokenin;
+    std::string numberbuffer = "";
+    std::string operbuffer = "";
+    std::vector<std::string> strbuffer = {};
+    
+    /* parse and tokenise input to tokenin */
+
+    for (int i = 0; i < equationin.size(); i++) {
+        // std::cout << i << " " << equationin[i] << " | "; printStringArray(strbuffer); std::cout << std::endl;
+        if (equationin[i] == ' ') continue;                 /* ignore all spaces */
+
+        if (numberbuffer.size() == 0 && equationin[i] == '-' && strbuffer.back() != "(" && strbuffer.back() != ")") {
+            numberbuffer += '-';
+            continue;
+        } 
+
+        if (isdigit(equationin[i]) || equationin[i] == '.') {
+            numberbuffer += equationin[i];                  /* input all numbers and decimal points */
+            continue;
+        }
+
+        operbuffer += equationin[i];
+        if (operators.contains(operbuffer) || functions.contains(operbuffer)) {   /* extra check to make sure not to */
+            if (numberbuffer != "")                                               /* accidentally add an empty token */
+                strbuffer.push_back(numberbuffer);
+            numberbuffer = "";
+            if (strbuffer.size() > 0 && operbuffer == "(" && (getNumber(strbuffer.back()) != std::nullopt || strbuffer.back() == ")")) {
+                strbuffer.push_back("*");
+            }
+            strbuffer.push_back(operbuffer);
+            operbuffer = "";
+        }
+
+        if (strbuffer.size() == 0) continue;
+        if (strbuffer.back() == "-" && strbuffer[strbuffer.size()-2] == "-") { /* all this here is because of idiotic edge cases that */
+            strbuffer.pop_back();                                              /* nobody is gonna encounter but i have to add or people */
+            strbuffer.pop_back();                                              /* will complain  */
+            strbuffer.push_back("+");
+        }
+
+        if (strbuffer.back() == "+" && strbuffer[strbuffer.size()-2] == "+") {
+            strbuffer.pop_back();
+        }
+    }
+
+    strbuffer.push_back(numberbuffer);
+    tokenin.resize(strbuffer.size());
+    for (int i = 0; i < strbuffer.size(); i++) {
+        std::optional<double> temp = getNumber(strbuffer[i]);
+        if (temp != std::nullopt) {                         /* is it a number? */ 
+            tokenin[i] = *temp;
+        } else {
+            tokenin[i] = strbuffer[i];
+        }
+    }
+    return tokenin;
+}
+
+int main(int argc, char* argv[]) {
     for (;;) {
         std::cout << "equation:  ";
         std::string equationin;
         std::getline(std::cin, equationin);
-
         equation tokenin;
-        std::string numberbuffer = "";
-        std::string operbuffer = "";
-        std::vector<std::string> strbuffer = {};
-    
-        /* parse and tokenise input to tokenin */
 
-        for (int i = 0; i < equationin.size(); i++) {
-            // std::cout << i << " " << equationin[i] << " | "; printStringArray(strbuffer); std::cout << std::endl;
-            if (equationin[i] == ' ') continue;                 /* ignore all spaces */
-
-            if (numberbuffer.size() == 0 && equationin[i] == '-' && strbuffer.back() != "(" && strbuffer.back() != ")") {
-                numberbuffer += '-';
-                continue;
-            } 
-
-            if (isdigit(equationin[i]) || equationin[i] == '.') {
-                numberbuffer += equationin[i];                  /* input all numbers and decimal points */
-                continue;
-            }
-
-            operbuffer += equationin[i];
-            if (operators.contains(operbuffer) || functions.contains(operbuffer)) {   /* extra check to make sure not to */
-                if (numberbuffer != "")                                               /* accidentally add an empty token */
-                    strbuffer.push_back(numberbuffer);
-                numberbuffer = "";
-                if (strbuffer.size() > 0 && operbuffer == "(" && (getNumber(strbuffer.back()) != std::nullopt || strbuffer.back() == ")")) {
-                    strbuffer.push_back("*");
-                }
-                strbuffer.push_back(operbuffer);
-                operbuffer = "";
-            }
-
-            if (strbuffer.size() == 0) continue;
-            if (strbuffer.back() == "-" && strbuffer[strbuffer.size()-2] == "-") { /* all this here is because of idiotic edge cases that */
-                strbuffer.pop_back();                                              /* nobody is gonna encounter but i have to add or people */
-                strbuffer.pop_back();                                              /* will complain  */
-                strbuffer.push_back("+");
-            }
-
-            if (strbuffer.back() == "+" && strbuffer[strbuffer.size()-2] == "+") {
-                strbuffer.pop_back();
-            }
-        }
-
-        strbuffer.push_back(numberbuffer);
-        tokenin.resize(strbuffer.size());
-        for (int i = 0; i < strbuffer.size(); i++) {
-            std::optional<double> temp = getNumber(strbuffer[i]);
-            if (temp != std::nullopt) {                         /* is it a number? */ 
-                tokenin[i] = *temp;
-            } else {
-                tokenin[i] = strbuffer[i];
-            }
-        }
+        tokenin = parseEquasion(equationin);
 
         /* print tokenised input */
          std::cout << "tokenised: "; printTokenArray(tokenin); std::cout << "\n";
