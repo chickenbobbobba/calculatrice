@@ -296,7 +296,7 @@ int main(int argc, char* argv[]) {
         tokenin = parseEquasion(equationin);
 
         /* print tokenised input */
-        std::cout << "tokenised: "; printTokenArray(tokenin); std::cout << "\n";
+        // std::cout << "tokenised: "; printTokenArray(tokenin); std::cout << "\n";
 
         equation postfixeq = convertToPostfix(tokenin);
 
