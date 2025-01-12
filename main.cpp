@@ -84,6 +84,7 @@ std::unordered_set<std::string> functions = {
     "cos",
     "tan",
     "sqrt",
+    "log",
 };
 
 std::unordered_set<std::string> rightAssociated = {
@@ -186,7 +187,6 @@ std::unordered_map<std::string, std::function<double(double)>> singOpMap {
     {"tan", [](double a) { return tan(a); }},
     {"!",   [](double a) { return std::tgamma(a+1); }},
     {"sqrt",[](double a) { return pow(a, 0.5); }},
-
 };
 
 double resolvePostfix(const equation& postfixeq) {
@@ -252,9 +252,11 @@ equation parseEquasion(const std::string& equationin) {
             if (numberbuffer != "")                                               /* accidentally add an empty token */
                 strbuffer.push_back(numberbuffer);
             numberbuffer = "";
-            if (strbuffer.size() > 0 && operbuffer == "(" && (getNumber(strbuffer.back()) != std::nullopt || strbuffer.back() == ")")) {
+            if (strbuffer.size() > 0 && (operbuffer == "(") && (getNumber(strbuffer.back()) != std::nullopt || strbuffer.back() == ")")) {
                 strbuffer.push_back("*");
             }
+            if (strbuffer.size() > 0 && getNumber(strbuffer.back()) != std::nullopt && functions.contains(operbuffer)) 
+                strbuffer.push_back("*");
             strbuffer.push_back(operbuffer);
             operbuffer = "";
         }
@@ -294,11 +296,11 @@ int main(int argc, char* argv[]) {
         tokenin = parseEquasion(equationin);
 
         /* print tokenised input */
-         std::cout << "tokenised: "; printTokenArray(tokenin); std::cout << "\n";
+        std::cout << "tokenised: "; printTokenArray(tokenin); std::cout << "\n";
 
         equation postfixeq = convertToPostfix(tokenin);
 
-         std::cout << "postfix:   "; printTokenArray(postfixeq); std::cout << std::endl;
+        // std::cout << "postfix:   "; printTokenArray(postfixeq); std::cout << std::endl;
         double answer = resolvePostfix(postfixeq);
         std::cout << std::setprecision(10) << "answer:    " << answer << std::endl;
     }
